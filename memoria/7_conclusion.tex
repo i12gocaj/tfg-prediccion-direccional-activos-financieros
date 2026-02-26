@@ -1,0 +1,136 @@
+\chapter{Conclusiones y trabajo futuro}
+\label{ch:conclusion}
+
+En este capítulo se recogen los hallazgos principales, se repasa hasta qué punto se han cumplido los objetivos y se apuntan direcciones de trabajo futuro.
+
+\section{Resultados principales}
+
+La pregunta central era si el sentimiento del mercado mejora las predicciones de precio. Con los datos y el protocolo empleados, la respuesta es que \textbf{no de forma clara}.
+
+En términos de error (MAPE), los baselines simples siguen siendo difíciles de batir: \textbf{ARIMA} obtiene el mejor MAPE medio y \textbf{Naive} queda muy cerca; por activo, Naive lidera en BTC-USD y ARIMA en TSLA y NVDA. Random Forest y XGBoost no mejoran a esos baselines, y el test de Diebold-Mariano detecta \textbf{empeoramientos significativos} frente a Naive en BTC-USD (incluyendo RF/XGBoost) y en varios modelos DL (especialmente en BTC-USD y NVDA; en TSLA, CNN también empeora de forma significativa). Las arquitecturas de aprendizaje profundo (CNN, LSTM y GRU) presentan errores claramente superiores; dentro de la familia DL, GRU es la arquitectura más estable al variar el horizonte, pero en el experimento principal a 7 días sigue quedando lejos de los baselines.
+
+Sobre el sentimiento, el estudio de ablación muestra un efecto pequeño y heterogéneo: en MAPE \textbf{mejora TSLA} en los tres modelos DL y mejora ligeramente NVDA en LSTM, pero \textbf{empeora BTC-USD} y empeora también NVDA en CNN/GRU. Sin embargo, el test de Wilcoxon no encuentra diferencias significativas en MAPE ni en DA/F1, y solo aparece un caso aislado en MCC; por tanto, estos cambios deben leerse como tendencias y no como evidencia concluyente.
+
+La direccionalidad aporta una perspectiva distinta, pero los resultados siguen siendo modestos (valores cercanos al 50\% en muchas combinaciones) y sensibles al activo y al periodo. En resumen, este trabajo refuerza la importancia de comparar contra baselines y de acompañar los promedios con tests estadísticos antes de afirmar ventaja predictiva.
+
+\section{Sobre los objetivos específicos}
+
+Al inicio del trabajo se marcaron siete objetivos concretos. A continuación se evalúa el grado de cumplimiento de cada uno.
+
+\textbf{Selección y descarga de activos.} Cumplido. Se seleccionaron tres activos con perfiles diferentes (BTC-USD, TSLA y NVDA) y se descargaron varios años de datos de precios. Para el sentimiento se utilizó GDELT y para precios Yahoo Finance.
+
+\textbf{Preprocesamiento de datos.} Cumplido. El pipeline de preprocesado calcula indicadores técnicos, alinea el sentimiento y genera las variables objetivo para distintos horizontes. Está implementado como módulo reutilizable (ver Anexo~\ref{ch:codigo}).
+
+\textbf{Incorporación del sentimiento.} Cumplido. La señal se extrae de GDELT con consultas específicas por activo (nombre y ticker) y se alinea por fecha sin usar información futura.
+
+\textbf{Implementación de modelos.} Cumplido. Se implementaron siete modelos de tres familias distintas, desde baselines simples hasta redes recurrentes con dropout, en Python con librerías estándar.
+
+\textbf{Definición del protocolo de evaluación.} Cumplido. Se utilizó validación walk-forward, doce iteraciones y métricas estándar (RMSE, MAE, MAPE), además de métricas direccionales, un test de Wilcoxon para la ablación y un test de Diebold-Mariano frente a Naive.
+
+\textbf{Análisis de resultados.} Cumplido. Se generaron tablas y visualizaciones, un estudio de ablación y un análisis por periodo de mercado. El análisis es amplio, aunque con limitaciones.
+
+\textbf{Conclusiones sobre el sentimiento.} Cumplido. La conclusión es matizada: el sentimiento muestra un efecto pequeño y heterogéneo (con tendencias de mejora en TSLA), pero no hay evidencia estadística robusta de mejora en esta configuración experimental; por tanto, el modelo más recomendable como referencia sigue siendo Naive/ARIMA.
+
+Puede afirmarse que los siete objetivos se han cumplido. Algunos podrían haberse abordado con mayor profundidad (por ejemplo, no se realizó tuning exhaustivo de hiperparámetros), pero el núcleo del trabajo está completo.
+
+La Tabla~\ref{tab:objetivos_cumplimiento} recoge de manera sintética el estado de cada objetivo y la evidencia asociada.
+
+\begin{table}[H]
+\centering
+\caption{Resumen de cumplimiento de los objetivos del trabajo.}
+\label{tab:objetivos_cumplimiento}
+\small
+\begin{tabular}{p{3.8cm}|c|p{6.5cm}}
+\hline
+\textbf{Objetivo} & \textbf{Estado} & \textbf{Evidencia} \\
+\hline
+1. Selección y descarga de activos & \textcolor{green!60!black}{\textbf{Cumplido}} & BTC-USD, TSLA y NVDA descargados vía Yahoo Finance (2021--2025). \\
+\hline
+2. Preprocesamiento de datos & \textcolor{green!60!black}{\textbf{Cumplido}} & Pipeline reproducible con indicadores técnicos, alineación temporal y forward fill. \\
+\hline
+3. Incorporación del sentimiento & \textcolor{green!60!black}{\textbf{Cumplido}} & GDELT por activo (Average Tone + Volume), sin look-ahead. \\
+\hline
+4. Implementación de modelos & \textcolor{green!60!black}{\textbf{Cumplido}} & 7 modelos: Naive, ARIMA, RF, XGBoost, LSTM, GRU, CNN~1D. \\
+\hline
+5. Protocolo de evaluación & \textcolor{green!60!black}{\textbf{Cumplido}} & Walk-forward (12 folds), MAPE/RMSE/MAE, Wilcoxon, Diebold-Mariano. \\
+\hline
+6. Análisis de resultados & \textcolor{green!60!black}{\textbf{Cumplido}} & 4 experimentos, ablación, métricas direccionales, análisis por periodo. \\
+\hline
+7. Conclusiones sobre sentimiento & \textcolor{green!60!black}{\textbf{Cumplido}} & Efecto pequeño y heterogéneo; mejora en TSLA, sin significancia estadística global. \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Discusión}
+
+\subsection{Sobre la predicción de mercados}
+
+Antes de la experimentación, cabía esperar que los modelos complejos superasen a los baselines. Sin embargo, los resultados no confirmaron esa expectativa.
+
+En los experimentos de horizonte, GRU es el más consistente dentro de DL en todos los horizontes, pero el error crece con rapidez al alargar la predicción. En la comparativa global a 7 días, el resultado central es que \textbf{los baselines dominan el MAPE} y que los modelos más complejos no logran mejoras estables.
+
+En cualquier caso, la interpretación debe ser prudente. La direccionalidad aporta información adicional pero resulta inestable, y los tests estadísticos no respaldan una superioridad clara entre modelos para todos los activos.
+
+La implicación es que puede existir margen de mejora en escenarios concretos, pero cualquier afirmación de superioridad debe apoyarse en análisis estadístico y no solo en medias.
+
+\subsection{Sobre el sentimiento}
+
+Un aspecto relevante es la complejidad del estudio de ablación. El impacto del sentimiento es variable y depende de la combinación modelo-activo, lo que dificulta extraer reglas generales a partir de medias agregadas.
+
+Hay casos donde parece añadir valor (TSLA) y otros donde introduce ruido (BTC-USD). El test de Wilcoxon ayuda a distinguir qué mejoras son consistentes y cuáles podrían ser azar; en este trabajo, no se observan efectos estadísticamente consistentes.
+
+\subsection{Hipótesis: cuándo aporta el sentimiento}
+
+La pregunta clave no es si el sentimiento funciona o no, sino \textbf{bajo qué condiciones} puede aportar valor. A partir de los resultados, estas son las hipótesis que parecen más plausibles:
+
+\textbf{Activos con narrativa fuerte y cobertura continua.} Tesla mejora \emph{ligeramente} con sentimiento en los tres modelos, aunque el efecto no es significativo. Es un activo dominado por noticias, controversia y expectativas, y el tono de la cobertura podría contener señal útil.
+
+\textbf{Modelos con memoria temporal.} En esta configuración experimental, el único caso claro de mejora en NVDA aparece en LSTM, lo que podría sugerir que algunas arquitecturas recurrentes incorporan mejor el contexto que CNN. Aun así, el efecto no es significativo y no se puede generalizar.
+
+\textbf{Régimen de mercado más estable.} En periodos turbulentos los errores suben para todos. Si el régimen es caótico, la señal externa pierde peso. En etapas más estables, el sentimiento puede sumar porque el ruido es menor.
+
+\textbf{Densidad de noticias suficiente.} Cuando la cobertura es irregular, el índice es más ruidoso. En activos con mayor volumen informativo, la señal se vuelve más consistente.
+
+Estas hipótesis no prueban causalidad, pero convierten una respuesta condicional en una agenda de investigación concreta: para sacar valor del sentimiento, es necesario controlar el tipo de activo, la arquitectura y el régimen de mercado.
+
+\subsection{Sobre los modelos}
+
+Dentro de los modelos DL, GRU es la arquitectura más estable tanto en el experimento de horizontes como en el análisis por periodos de mercado, donde obtiene el mejor MAPE en dos de los tres periodos evaluados. No obstante, en el experimento principal los modelos DL quedan claramente por detrás de los baselines. LSTM, por su parte, muestra mejor rendimiento en el mercado bajista de 2022, lo que sugiere que el contexto de mercado influye en el ranking relativo entre arquitecturas. CNN es la opción menos recomendable en general: aunque entrena más rápido, su direccionalidad es inestable y su error tiende a ser el más alto. En conjunto, la complejidad adicional de las redes profundas no se traduce automáticamente en mejor generalización con datos ruidosos y señales agregadas.
+
+En el caso de Random Forest y XGBoost, el rendimiento es razonable pero no supera a Naive/ARIMA, lo que apunta a que los retardos simples no capturan suficiente estructura temporal y que sería necesaria una ingeniería de características más elaborada o un ajuste más cuidadoso.
+
+\section{Limitaciones y aspectos mejorables}
+
+Se identifican varias limitaciones:
+
+\textbf{Hiperparámetros.} Se utilizaron configuraciones por defecto razonables, pero no se realizó una búsqueda sistemática. Con más tiempo, se podría haber experimentado con diferentes tamaños de red, tasas de dropout, longitudes de secuencia, etc.
+
+\textbf{Más activos.} Tres activos dan para ver patrones, pero más activos aportarían mayor confianza en la generalización. Resultaría interesante incluir divisas, commodities o índices.
+
+\textbf{Tamaño del test.} Con doce folds de 30 días, el test total es de 360 días. Es una muestra más amplia, pero todavía puede verse afectada por el azar o por el régimen de mercado. Los resultados son indicativos, no concluyentes.
+
+\textbf{Dependencia de APIs.} Los índices de sentimiento dependen de proveedores externos. Cambios en la cobertura de noticias, límites de API o sesgos editoriales pueden afectar la señal. A largo plazo, sería preferible construir un índice propio a partir de noticias y un modelo de lenguaje.
+
+\textbf{Estrategias de trading.} Predecir bien el precio es una cosa; ganar dinero con esas predicciones es otra. No se ha evaluado si las predicciones son rentables una vez que se tienen en cuenta costes de transacción y gestión del riesgo.
+
+\section{Líneas de trabajo futuro}
+
+Como trabajo futuro, se proponen varias direcciones prometedoras.
+
+\textbf{Transformers.} La arquitectura que domina el procesamiento de lenguaje natural también se está aplicando a series temporales. Sería interesante comparar con LSTM y GRU.
+
+\textbf{NLP para sentimiento.} En lugar de usar índices agregados, procesar directamente tweets o noticias con modelos de lenguaje. Esto daría una señal de sentimiento más granular y en tiempo real.
+
+\textbf{Predicción de volatilidad.} Tan importante como predecir el precio es predecir cuánto va a moverse. Modelos específicos de volatilidad podrían complementar lo hecho aquí.
+
+\textbf{Backtesting serio.} Simular estrategias de trading con costes realistas, gestión de posiciones, control de riesgo. Ver si las predicciones se traducen en rentabilidad.
+
+\textbf{Investigar por qué algunos modelos empeoran con sentimiento.} En este trabajo, incluir sentimiento empeora BTC-USD en los tres modelos DL y empeora NVDA en CNN/GRU, mientras que mejora TSLA y mejora ligeramente NVDA en LSTM. Aunque el efecto no es significativo, merece análisis: sobreajuste, ruido en el índice agregado o diferencias estructurales entre activos.
+
+\section{Palabras finales}
+
+Este proyecto integra datos financieros, indicadores técnicos, señales de sentimiento y modelos de aprendizaje profundo, lo cual implica coordinar muchas piezas y vigilar posibles fuentes de sesgo en cada una de ellas.
+
+La lección más clara que deja es que más datos no siempre significan mejores resultados. Una señal adicional debe ser estable y el modelo debe poder aprovecharla sin incurrir en la memorización de ruido. Aunque este principio resulta conocido, en la práctica resulta sencillo pasarlo por alto.
+
+El trabajo queda como una base reproducible para quienes deseen continuar la investigación en predicción financiera con machine learning. Las limitaciones están identificadas, las líneas futuras apuntadas, y el código disponible para que cualquiera pueda replicar (o mejorar) lo hecho aquí.

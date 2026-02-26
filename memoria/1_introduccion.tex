@@ -1,0 +1,60 @@
+\chapter{Introducción}
+\label{ch:introduccion}
+
+\section{Motivación}
+
+En los últimos diez años, la inversión ha dejado de ser una actividad restringida a profesionales. Plataformas como Robinhood o Coinbase han abierto la puerta a millones de usuarios que operan con activos desde dispositivos móviles, las veinticuatro horas del día en el caso de las criptomonedas. Dicho acceso masivo ha despertado un interés creciente por herramientas cuantitativas que intenten anticipar la evolución de precios a corto plazo.
+
+El aprendizaje automático, que ha producido resultados notables en visión por ordenador y procesamiento de lenguaje natural~\cite{lecun2015deep}, constituye un enfoque prometedor para este tipo de problema. Sin embargo, las series de precios financieros presentan propiedades muy distintas a las de imágenes o texto. Exhiben una relación señal/ruido reducida, experimentan cambios de régimen frecuentes y cualquier patrón explotable tiende a desaparecer a medida que los inversores lo incorporan en sus estrategias~\cite{fama1970efficient}.
+
+No obstante, existen indicios de que ciertas variables externas al precio (el tono de noticias, las recomendaciones de analistas o el sentimiento agregado en redes sociales) guardan relación con movimientos de mercado~\cite{baker2007investor, bollen2011twitter}. Este trabajo parte de esa premisa y plantea una pregunta concreta: ¿aporta información relevante una señal de sentimiento extraída de noticias cuando ya se dispone del historial de precios?
+
+\section{El problema a resolver}
+
+El problema central consiste en predecir el precio de cierre de un activo financiero, tomando como horizonte principal una semana y evaluando también horizontes de 1 y 30 días. Además, se evalúa si la incorporación de una señal de sentimiento del mercado mejora la precisión respecto a utilizar únicamente información histórica de precios.
+
+Para abordar esta cuestión se necesitan tres elementos:
+
+\begin{enumerate}
+    \item \textbf{Datos.} Precios históricos de varios activos con características diferentes: un criptoactivo (BTC-USD~\cite{nakamoto2008bitcoin}) y dos acciones tecnológicas con elevada cobertura mediática (TSLA y NVDA). Además, una señal de sentimiento específica por activo extraída de noticias: el tono medio diario de GDELT (Average Tone~\cite{gdelt2024api}), junto con un proxy de volumen basado en la intensidad de cobertura.
+    
+    \item \textbf{Modelos.} Desde baselines simples (asumir que el precio futuro es igual al actual) hasta modelos más sofisticados (árboles y redes neuronales secuenciales). El objetivo es determinar si el aumento de complejidad se traduce en una mejora medible.
+    
+    \item \textbf{Evaluación rigurosa.} Las comparaciones deben basarse en métricas claras~\cite{hyndman2006another}, validación que respete la estructura temporal de los datos, y análisis de diferentes condiciones de mercado.
+\end{enumerate}
+
+\section{Preguntas de investigación}
+
+Antes de abordar la implementación, resulta necesario delimitar las cuestiones que se pretende investigar. Las siguientes preguntas guiaron el diseño experimental:
+
+\begin{itemize}
+    \item \textbf{Comparación frente a baselines ingenuos.} Se buscan resultados cuantitativos que permitan comparar de forma objetiva.
+    
+    \item \textbf{Adecuación de distintas familias de modelos.} Los modelos de árboles como Random Forest y XGBoost~\cite{chen2016xgboost} dominan en muchos problemas de datos tabulares, mientras que las redes recurrentes~\cite{hochreiter1997long} están diseñadas específicamente para secuencias.
+    
+    \item \textbf{Contribución marginal del sentimiento.} Esta es la cuestión central: si la incorporación de sentimiento aporta señal adicional, existen implicaciones teóricas (relación con la eficiencia de mercado) y prácticas (justificación del coste de recopilar y procesar esta información).
+    
+    \item \textbf{Dependencia respecto al activo.} El efecto del sentimiento puede variar por activo, en función de su sensibilidad al flujo informativo, la composición del mercado y su dinámica.
+    
+    \item \textbf{Magnitud práctica de la mejora.} Aun cuando se observe una mejora en las métricas, se discute si su magnitud sería relevante desde un punto de vista operativo.
+    
+    \item \textbf{Influencia del horizonte temporal.} Se analiza cómo varían los resultados al predecir a 1, 7 y 30 días.
+\end{itemize}
+
+\section{Estructura del documento}
+
+El resto de la memoria se organiza de la siguiente forma:
+
+En el \textbf{Capítulo~\ref{ch:arte}} se revisa el estado del arte: qué se sabe sobre predicción de series financieras, qué modelos existen, y qué papel juega el sentimiento según la literatura.
+
+El \textbf{Capítulo~\ref{ch:objetivos}} formaliza el problema y define los objetivos específicos que se proponen alcanzar.
+
+En el \textbf{Capítulo~\ref{ch:metodología}} se explica la metodología: qué datos se utilizan, cómo se procesan, qué modelos se implementan, y cómo se evalúan los resultados.
+
+El \textbf{Capítulo~\ref{ch:desarrollo}} profundiza en los detalles técnicos: herramientas, código, arquitecturas, configuración de experimentos.
+
+En el \textbf{Capítulo~\ref{ch:resultados}} se presentan los resultados obtenidos, con tablas, figuras y su interpretación.
+
+Finalmente, el \textbf{Capítulo~\ref{ch:conclusion}} cierra el trabajo con las conclusiones principales, las limitaciones identificadas, y las líneas abiertas para futuros trabajos.
+
+Se incluyen además varios anexos complementarios: el \textbf{Anexo~\ref{ch:codigo}} contiene los fragmentos de código más relevantes del proyecto, y el \textbf{Anexo~\ref{ch:manual}} proporciona un manual de instalación y uso del sistema. En las páginas preliminares, tras los índices, se incluye además la lista de acrónimos utilizados.

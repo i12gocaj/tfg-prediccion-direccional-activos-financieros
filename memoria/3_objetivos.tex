@@ -1,0 +1,60 @@
+\chapter{Formulación del problema y objetivos}
+\label{ch:objetivos}
+
+\section{Definición del problema}
+
+Antes de implementar modelos, conviene definir con precisión qué problema se intenta resolver. De forma resumida, se aborda la predicción del precio de cierre de un activo financiero a corto plazo, utilizando tanto su historial de precios como información externa relacionada con el sentimiento del mercado.
+
+En términos formales: dada una serie temporal de precios $\{y_t\}$ donde cada $y_t$ es el precio de cierre del activo en el día $t$, a partir de la información disponible hasta el día $t$, se busca estimar el precio $y_{t+h}$ que tendrá el activo $h$ días en el futuro.
+
+Para hacer esta estimación se pueden usar distintas fuentes de información:
+
+Por un lado, la propia historia del precio. Los valores pasados $y_{t-1}, y_{t-2}, \ldots$ contienen información sobre tendencias, ciclos y patrones que podrían repetirse. También se pueden calcular indicadores derivados como medias móviles, el RSI o las bandas de Bollinger, que resumen aspectos de la dinámica reciente.
+
+Por otro lado, información externa al propio precio. En este trabajo, esa información externa se modela mediante una señal de sentimiento: un indicador agregado que resume el tono del flujo de noticias asociado a cada activo. La hipótesis es que esta señal puede capturar factores externos que no se reflejan de inmediato en la dinámica histórica del precio.
+
+Formalmente, se construye una función de predicción:
+\[
+\hat{y}_{t+h} = f_{\theta}(\mathbf{x}_t)
+\]
+donde $\mathbf{x}_t$ es un vector que incluye precios pasados, indicadores técnicos y la señal de sentimiento. El modelo $f$ ---que puede ser una red neuronal, un bosque aleatorio, o cualquier otro--- aprende los parámetros $\theta$ a partir de datos históricos.
+
+\section{Regresión y clasificación}
+
+Este problema admite dos enfoques:
+
+El enfoque de \textbf{regresión} intenta predecir el valor numérico exacto del precio futuro. El error se mide en euros o dólares: cuánto se equivoca el modelo de media. Resulta más ambicioso, pero también más complejo.
+
+El enfoque de \textbf{clasificación} simplifica la pregunta: en lugar de predecir el precio exacto, se intenta predecir si el precio futuro será mayor o menor que el actual. En este caso cobran sentido métricas como el acierto direccional, el F1 y el MCC.
+
+En este trabajo se prioriza la regresión para cuantificar el error, pero se evalúa explícitamente la dirección del movimiento como métrica complementaria, en línea con el objetivo de predicción direccional.
+
+\section{Hipótesis de investigación}
+
+Más allá de la mecánica de predicción, la hipótesis de investigación plantea que incorporar una señal de sentimiento derivada de noticias puede aportar información adicional y, potencialmente, mejorar la predicción respecto a utilizar únicamente precios e indicadores técnicos.
+
+Para contrastar esta hipótesis, se evalúan los mismos modelos en dos configuraciones: con sentimiento y sin sentimiento. Una mejora consistente de las métricas al incorporar sentimiento constituiría evidencia a favor de su utilidad en el marco experimental definido.
+
+Asimismo, se contempla que el efecto dependa del activo. Por ejemplo, en mercados con elevada sensibilidad al flujo informativo (como los criptoactivos) el sentimiento podría resultar más relevante que en acciones con dinámicas distintas, o viceversa.
+
+\section{Objetivos del trabajo}
+
+Para estructurar el trabajo se definieron siete objetivos concretos:
+
+\begin{enumerate}
+    \item \textbf{Selección y descarga de activos.} Seleccionar activos con características diferentes y descargar sus datos históricos. Se eligieron Bitcoin, Tesla y Nvidia por ser activos con dinámicas distintas: un criptoactivo y dos acciones tecnológicas con alta visibilidad.
+    
+    \item \textbf{Preprocesamiento de datos.} Calcular rendimientos, generar indicadores técnicos, alinear la serie de sentimiento con los precios, y crear las variables objetivo para distintos horizontes.
+    
+    \item \textbf{Incorporación del sentimiento.} Integrar la señal de sentimiento de forma correcta, evitando el uso de información futura y asegurando que la señal sea específica por activo (noticias por ticker y sentimiento dedicado).
+    
+    \item \textbf{Implementación de modelos.} Implementar varios modelos de predicción, desde baselines simples (predictor naive) hasta redes neuronales recurrentes, para comparar qué nivel de complejidad aporta valor.
+    
+    \item \textbf{Definición del protocolo de evaluación.} Establecer métricas claras (RMSE, MAE, MAPE) y métricas direccionales (MDA, F1, MCC), un protocolo de validación walk-forward que respete la naturaleza temporal, y tests estadísticos para la ablación con/sin sentimiento.
+    
+    \item \textbf{Análisis de resultados.} Analizar los resultados a fondo, entendiendo no solo qué modelo es mejor, sino por qué, en qué condiciones, y con qué limitaciones.
+    
+    \item \textbf{Conclusiones sobre el sentimiento.} Extraer conclusiones sobre la utilidad del sentimiento como variable predictiva, qué modelos son más recomendables bajo el protocolo planteado y qué aspectos quedan pendientes para futuros trabajos.
+\end{enumerate}
+
+Si las preguntas planteadas pueden responderse con evidencia empírica sólida, se habrán cumplido los objetivos propuestos.

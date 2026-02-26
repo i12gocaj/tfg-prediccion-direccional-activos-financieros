@@ -1,0 +1,239 @@
+% #----------------------------------------------#
+% |   Autor Plantilla: Eduardo Cañete Carmona    |
+% |   Fecha creación: 01/07/2019                 |
+% |   Ultima actualización: 10/06/2024           |
+% |   Versión: 3.2                               |
+% #----------------------------------------------#
+
+\documentclass[a4paper, 12pt, openany]{book}
+\pdfsuppresswarningpagegroup=1
+
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[left = 35mm, right = 25mm, top = 25mm, height = 206mm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{lipsum}
+\usepackage[square,numbers]{natbib}
+\usepackage[skip=12pt,font=small]{caption}  %Tamaño de la leyenda
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{afterpage}
+\usepackage{titlesec}
+\usepackage{color, colortbl}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{eurosym}
+\usepackage{enumitem}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{url}
+\usepackage{eurosym}
+\usepackage{appendix}
+\usepackage{pdfpages}
+\usepackage{pdflscape} %poner pdf horizontal
+\usepackage[hidelinks]{hyperref}%para el hiperlink de las secciones
+\usepackage{newfloat}
+\usepackage[nottoc]{tocbibind}
+\PassOptionsToPackage{nowarn}{tracklang}
+\usepackage[acronym,nomain,nonumberlist,nowarn]{glossaries}
+
+
+\usepackage{tikz} % Diagramas de flujo
+\usetikzlibrary{shapes.geometric, arrows, babel} %Libería de flechas + compatibilidad Babel
+
+\usepackage{datetime}
+\newdateformat{monthyeardate}{\monthname, \THEYEAR}
+
+\newfloat{listing}{htbp}{lol}
+\newfloat{diagrama}{htbp}{loc}
+\floatname{diagrama}{Diagrama}
+\newcommand{\listofdiagrams}{\listof{diagrama}{Índice de Diagramas de Flujo}}
+\floatstyle{plaintop}
+\restylefloat{table}
+
+% Entorno para código
+\newenvironment{code}{\captionsetup{type=listing}}{}
+
+\floatname{listing}{Código}
+\newcommand{\listoflistings}{\listof{listing}{Índice de Códigos}}
+
+\graphicspath{ {Imagenes/} }
+
+
+\input{Configuracion/confg_colores}
+\input{Configuracion/confg_codigo}
+\input{Configuracion/confg_diagrama_flujo}
+%----------------------------------------------------------------------------------------
+%	ENCABEZADOS Y PIE DE PAGINA
+%----------------------------------------------------------------------------------------
+
+\pagestyle{fancy}
+	\fancypagestyle{cuerpo}{
+      \fancyfoot{}
+      \fancyfoot[L]{Trabajo Fin de Grado} %Autor
+      \fancyfoot[C]{}
+      \fancyfoot[R]{- \thepage \ -}
+      \fancyhead{}
+      \fancyhead[L]{\leftmark} %Nombre del documento
+      \fancyhead[R]{\includegraphics[height=1.8cm]{logo_uco}} %Logo Universidad
+      \renewcommand{\headrulewidth}{0.4pt}
+      \renewcommand{\footrulewidth}{0.4pt}
+      \setlength{\headheight}{65pt}
+    }
+    \fancypagestyle{indice}{
+      \fancyfoot{}
+      \fancyfoot[L]{\AutorTFG} %Autor
+      \fancyfoot[R]{- \thepage \ -} %Asignatura
+      \fancyhead{}
+      \fancyhead[L]{Trabajo Fin de Grado} %Nombre del documento
+      \fancyhead[R]{\includegraphics[height=1.8cm]{logo_uco}} %Logo
+      \renewcommand{\headrulewidth}{0.4pt}
+      \renewcommand{\footrulewidth}{0.4pt}
+      \setlength{\headheight}{65pt}
+      }
+      
+    \fancypagestyle{plain}{% % <-- this is new
+     \fancyfoot{}
+      \fancyfoot[L]{Trabajo Fin de Grado} %Autor
+      \fancyfoot[C]{} %ecc
+      \fancyfoot[R]{- \thepage \ -}
+      \fancyhead{}
+      \fancyhead[L]{\leftmark} %Nombre del documento
+      \fancyhead[R]{\includegraphics[height=1.8cm]{logo_uco}} %Logo Universidad
+      \renewcommand{\headrulewidth}{0.4pt}
+      \renewcommand{\footrulewidth}{0.4pt}
+      \setlength{\headheight}{65pt}
+    }
+  
+\setcounter{secnumdepth}{4}
+
+%%%%%%%%%
+% ANEXO %
+%%%%%%%%%
+
+% Para que ponga ANEXO en vez de APENDICE
+ \addto\captionsspanish{\renewcommand{\appendixname}{Anexo}} %para que ponga anexo y no apéndice.
+
+\makenoidxglossaries
+\loadglsentries{lista_acronimos}
+\raggedbottom  % Quita huecos grandes en blanco
+\begin{document}
+\pagenumbering{roman}
+
+%%%%%%%%%%%
+% PORTADA %
+%%%%%%%%%%%
+\input{Portada/cover}
+\newpage
+\thispagestyle{empty}   % Página en blanco entre la portada y el comienzo del documento
+\mbox{} 
+$\ $
+\thispagestyle{empty} % para que no se numere esta pagina
+\newpage
+$\ $
+\thispagestyle{empty} % para que no se numere esta pagina
+
+%%%%%%%%%%%%%%%
+% DEDICATORIA %
+%%%%%%%%%%%%%%%
+\pagestyle{indice}
+\thispagestyle{indice}
+\begin{flushright}
+\textit{Dedicado a mí,\\
+porque nunca dejé\\
+de creer y soñar\\
+que lo conseguiría.}
+\end{flushright}
+
+%%%%%%%%%%%%%%%%%%%
+% AGRADECIMIENTOS %
+%%%%%%%%%%%%%%%%%%%
+\input{0_agradecimientos}
+
+%%%%%%%%%%%%%%%%%%%%%%
+% RESUMEN Y ABSTRACT %
+%%%%%%%%%%%%%%%%%%%%%%
+\input{0_resumen_y_abstract}
+
+%%%%%%%%%%%%%%%%%%
+% INDICE GENERAL %
+%%%%%%%%%%%%%%%%%%
+\newpage
+\thispagestyle{fancy} 
+
+\tableofcontents
+
+
+\listoffigures
+
+
+\listoftables
+
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Lista de Acrónimos}
+
+\glsaddall
+\printnoidxglossary[type=\acronymtype, title={Acrónimos}]
+
+%---------------------%
+%	CUERPO DE TEXTO   %
+%---------------------%
+
+
+
+\newpage
+\newpage
+
+\pagestyle{cuerpo}
+\thispagestyle{cuerpo}
+
+\pagenumbering{arabic}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                         ESTRUCTURA CONTENIDO                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%------------------%
+%	CAPÍTULOS      %
+%------------------%
+
+\input{1_introduccion}
+\input{2_arte}
+\input{3_objetivos}
+\input{4_metodología}
+\input{5_desarrollo}
+\input{6_resultados}
+\input{7_conclusion}
+
+%------------------%
+%	BIBLIOGRAFIA   %
+%------------------%
+
+%Estilo de la bibliografia
+\bibliographystyle{unsrtnat} 
+%\bibliographystyle{elsarticle-num}
+\begingroup
+\raggedright
+\sloppy
+\bibliography{referencias.bib} 
+\endgroup
+
+%------------------%
+%      ANEXOS      %
+%------------------%
+
+\appendix
+
+\input{anexo_codigo}
+\input{anexo_manual_usuario}
+\input{8_firmas}
+
+\end{document}

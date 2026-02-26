@@ -1,0 +1,182 @@
+\chapter{Manual de Usuario}
+\label{ch:manual}
+
+Este anexo proporciona las instrucciones necesarias para instalar, configurar y ejecutar el sistema de predicción de activos financieros desarrollado en este trabajo.
+
+\section{Requisitos del Sistema}
+
+\subsection{Software Requerido}
+\begin{itemize}
+    \item Python 3.11 o superior
+    \item pip (gestor de paquetes de Python)
+    \item Git (opcional, para clonar el repositorio)
+    \item Conexión a Internet (para descargar datos)
+    \item No se requieren claves de API (el sentimiento se obtiene de GDELT)
+\end{itemize}
+
+\subsection{Hardware Recomendado}
+\begin{itemize}
+    \item Procesador: Intel Core i5 o equivalente
+    \item Memoria RAM: 8 GB mínimo (16 GB recomendado)
+    \item Espacio en disco: 1 GB libre
+    \item GPU: Opcional, acelera el entrenamiento de modelos DL
+\end{itemize}
+
+\section{Instalación}
+
+\subsection{Paso 1: Clonar o Descargar el Proyecto}
+
+Descargue el proyecto o clónelo desde el repositorio:
+
+\begin{verbatim}
+git clone <url-del-repositorio>
+cd tfg
+\end{verbatim}
+
+\subsection{Paso 2: Crear Entorno Virtual (Recomendado)}
+
+\begin{verbatim}
+python -m venv .venv
+source .venv/bin/activate   # Linux/Mac
+.venv\Scripts\activate      # Windows
+\end{verbatim}
+
+\subsection{Paso 3: Instalar Dependencias}
+
+\begin{verbatim}
+pip install -r requirements.txt
+\end{verbatim}
+
+Las principales dependencias incluyen pandas, numpy, yfinance y tensorflow. También se usan scikit-learn, xgboost, statsmodels, matplotlib y ta.
+
+\subsection{Paso 4: Configurar Fuentes de Sentimiento}
+
+El sentimiento específico por activo se obtiene de GDELT y no requiere configurar variables de entorno.
+
+\textbf{Nota:} el descargador usa consultas GDELT abiertas, así que no hay pasos extra de configuración.
+
+\section{Estructura del Proyecto}
+
+\begin{verbatim}
+tfg/
++-- data/
+|   +-- raw/          # Datos descargados
+|   +-- processed/    # Datos preprocesados
++-- src/
+|   +-- data/         # Modulos de datos
+|   +-- models/       # Implementacion de modelos
+|   +-- evaluation/   # Validacion y metricas
+|   +-- utils/        # Reproducibilidad y utilidades
++-- scripts/          # Scripts de ejecucion
++-- results/          # Resultados (CSV) y plots
+|   +-- plots/        # Figuras generadas
++-- memoria/          # Documento LaTeX
+|   +-- Imagenes/     # Figuras incluidas en la memoria
++-- main.py           # Script principal
++-- requirements.txt  # Dependencias
+\end{verbatim}
+
+\section{Ejecución del Sistema}
+
+\subsection{Opción 1: Ejecución Completa}
+
+Para ejecutar todo el pipeline (descarga, preprocesado, entrenamiento, evaluación):
+
+\begin{verbatim}
+python main.py
+\end{verbatim}
+Esto genera los CSV en \texttt{results/}, las figuras en \texttt{results/plots/} y las tablas LaTeX en \texttt{memoria/Tablas/}. Además, se copian automáticamente las figuras a \texttt{memoria/Imagenes/} para facilitar la recompilación de la memoria.
+
+\subsection{Opción 2: Ejecución por Etapas}
+
+Si se ejecutan scripts directamente desde la raíz, es necesario que Python pueda encontrar \texttt{src}. En Linux/Mac basta con anteponer \texttt{PYTHONPATH=.} al comando; en Windows puede ejecutarse \texttt{set PYTHONPATH=.} en la consola antes de ejecutar.
+
+\subsubsection{Descargar Datos}
+\begin{verbatim}
+python -c "from src.data.downloader import DataDownloader; \
+           d = DataDownloader(); d.download_all()"
+\end{verbatim}
+Por defecto descarga el periodo 2020-11-01 a 2025-11-30; si se requiere otro rango, puede ajustarse en \texttt{src/data/downloader.py}.
+
+\subsubsection{Preprocesar Datos}
+\begin{verbatim}
+PYTHONPATH=. python src/data/preprocessor.py
+\end{verbatim}
+
+\subsubsection{Ejecutar Todos los Experimentos}
+\begin{verbatim}
+PYTHONPATH=. python scripts/run_all_experiments.py
+\end{verbatim}
+Este script ejecuta los experimentos A-D tal y como se reportan en la memoria.
+
+\subsubsection{Generar Gráficas}
+\begin{verbatim}
+PYTHONPATH=. python scripts/generate_all_plots.py
+PYTHONPATH=. python scripts/generate_summary_plots.py
+\end{verbatim}
+Las figuras se guardan en \texttt{results/plots/}. Al ejecutar \texttt{main.py} se copian automáticamente a \texttt{memoria/Imagenes/}. Si se ejecutan los scripts por separado, conviene copiar las imágenes a \texttt{memoria/Imagenes/} antes de recompilar el documento.
+
+\subsubsection{Exportar Tablas a LaTeX}
+
+Tras ejecutar los experimentos, las tablas en LaTeX para la memoria pueden generarse con:
+\begin{verbatim}
+PYTHONPATH=. python scripts/export_tables_to_latex.py
+\end{verbatim}
+Las tablas se guardan en \texttt{memoria/Tablas/} y se incluyen automáticamente en el documento.
+
+\section{Configuración de Parámetros}
+
+Los principales parámetros configurables se encuentran en los scripts de ejecución:
+
+\begin{itemize}
+    \item \texttt{tickers}: Lista de activos a analizar (por defecto: BTC-USD, TSLA, NVDA)
+    \item \texttt{horizon}: Horizonte de predicción en días (por defecto: 7)
+    \item \texttt{window\_size}: Tamaño de la ventana temporal para DL (por defecto: 30)
+    \item \texttt{n\_splits}: Número de iteraciones walk-forward (por defecto: 12)
+    \item \texttt{test\_size}: Tamaño del bloque de test por fold (por defecto: 30 días)
+    \item \texttt{epochs}: Épocas de entrenamiento para DL (por defecto: 10)
+\end{itemize}
+Las semillas están fijadas a 42 para facilitar la reproducibilidad y se reinician por fold y modelo en cada entrenamiento. En CPU los resultados son idénticos; en GPU puede haber ligeras variaciones.
+
+\section{Interpretación de Resultados}
+
+Los resultados se guardan en la carpeta \texttt{results/}:
+
+\begin{itemize}
+    \item \texttt{experiment\_*\_results.csv}: Métricas de cada experimento
+    \item \texttt{directional\_accuracy\_results.csv}: Resultados de precisión direccional
+    \item \texttt{diebold\_mariano\_results.csv}: Test de significancia estadística
+    \item \texttt{experiment\_c\_ablation\_tests.csv}: Test de Wilcoxon para ablación
+    \item \texttt{plots/*.png}: Visualizaciones generadas
+\end{itemize}
+
+Las métricas principales son:
+\begin{itemize}
+    \item \textbf{RMSE}: Error cuadrático medio (en USD)
+    \item \textbf{MAE}: Error absoluto medio (en USD)
+    \item \textbf{MAPE}: Error porcentual medio (\%) - métrica principal de comparación
+    \item \textbf{Directional Accuracy}: Porcentaje de acierto en la dirección del precio (\%)
+    \item \textbf{Directional F1}: F1 de la clase ``sube'' (\%)
+    \item \textbf{Directional MCC}: Coeficiente de Matthews ([-1, 1])
+\end{itemize}
+
+\subsubsection{Calcular Métricas Adicionales}
+Para calcular la precisión direccional, F1, MCC y el test de Diebold-Mariano:
+\begin{verbatim}
+PYTHONPATH=. python scripts/run_additional_metrics.py
+\end{verbatim}
+
+\section{Resolución de Problemas}
+
+\subsection{Error de Conexión}
+Si falla la descarga de datos, verifique su conexión a Internet y que las APIs estén disponibles.
+
+\subsection{Error de Memoria}
+Si el entrenamiento de modelos DL falla por memoria, reduzca el \texttt{batch\_size} o el número de épocas.
+
+\subsection{Advertencias de TensorFlow}
+En algunas ejecuciones, TensorFlow puede mostrar avisos internos (por ejemplo, sobre \textit{retracing}). En el código se reduce el nivel de \textit{logging} por defecto para evitar ruido en consola; si aparecen avisos, no afectan a los resultados numéricos. Si se desea ver el log completo para depuración, puede establecerse \texttt{TF\_CPP\_MIN\_LOG\_LEVEL=0} antes de ejecutar.
+
+\section{Contacto y Soporte}
+
+Para dudas o problemas técnicos, se recomienda consultar la documentación del código fuente o contactar con el autor del trabajo.
