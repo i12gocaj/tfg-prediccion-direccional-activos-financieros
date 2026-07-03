@@ -1,21 +1,21 @@
-# TFG - Prediccion direccional de activos financieros con aprendizaje automatico y datos alternativos
+# Final Degree Project - Directional Prediction of Financial Assets with Machine Learning and Alternative Data
 
-Este repositorio contiene el codigo y los artefactos del Trabajo de Fin de Grado orientado a la prediccion de direccion del mercado en varios activos financieros, combinando:
+This repository contains the code and artifacts for my Final Degree Project, focused on predicting market direction across several financial assets by combining:
 
-- Indicadores tecnicos
-- Modelos baseline y de machine learning
-- Modelos deep learning
-- Datos alternativos de sentimiento (GDELT)
+- Technical indicators
+- Baseline and machine learning models
+- Deep learning models
+- Alternative sentiment data (GDELT)
 
-## Autor
+## Author
 
 - Javier Gonzalez Casares
 
-## Objetivo
+## Objective
 
-Comparar el rendimiento de diferentes enfoques de modelado para predecir la evolucion de activos financieros (`BTC-USD`, `TSLA`, `NVDA`) en varios horizontes temporales, y evaluar el impacto del sentimiento de noticias como variable explicativa.
+The goal is to compare different modelling approaches for predicting the evolution of financial assets (`BTC-USD`, `TSLA`, `NVDA`) across several time horizons, and to evaluate the impact of news sentiment as an explanatory variable.
 
-## Stack tecnologico
+## Tech Stack
 
 - Python 3.x
 - pandas, numpy, scipy
@@ -25,74 +25,74 @@ Comparar el rendimiento de diferentes enfoques de modelado para predecir la evol
 - matplotlib, seaborn
 - ta
 
-## Estructura del proyecto
+## Project Structure
 
 ```text
 .
-├── main.py                      # Pipeline completo (descarga, preproceso, experimentos, metricas, graficas)
+├── main.py                      # Full pipeline: download, preprocessing, experiments, metrics, charts
 ├── requirements.txt
 ├── data/
-│   ├── raw/                     # Datos descargados
-│   └── processed/               # Datos procesados para modelado
+│   ├── raw/                     # Downloaded data
+│   └── processed/               # Processed data for modelling
 ├── src/
-│   ├── data/                    # Descarga y preprocesamiento
-│   ├── models/                  # Baselines, ML y DL
-│   ├── evaluation/              # Validacion temporal y metricas
-│   └── utils/                   # Reproducibilidad
-├── scripts/                     # Ejecucion de experimentos y generacion de salidas
-├── results/                     # CSV de resultados y graficas
-└── memoria/                     # Memoria escrita (LaTeX), figuras y anexos
+│   ├── data/                    # Download and preprocessing
+│   ├── models/                  # Baselines, ML, and DL
+│   ├── evaluation/              # Temporal validation and metrics
+│   └── utils/                   # Reproducibility
+├── scripts/                     # Experiment execution and output generation
+├── results/                     # Result CSVs and charts
+└── memoria/                     # Written thesis (LaTeX), figures, and appendices
 ```
 
-## Instalacion
+## Installation
 
-1. Crear entorno virtual:
+1. Create a virtual environment:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-2. Instalar dependencias:
+2. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Ejecucion
+## Execution
 
-Para ejecutar el flujo completo:
+Run the full workflow:
 
 ```bash
 python main.py
 ```
 
-El pipeline realiza:
+The pipeline performs:
 
-1. Descarga de datos financieros y de sentimiento
-2. Preprocesamiento y construccion de variables
-3. Ejecucion de experimentos A-D
-4. Calculo de metricas adicionales
-5. Generacion de graficas
-6. Export de tablas para LaTeX
+1. Download of financial and sentiment data
+2. Preprocessing and feature construction
+3. Execution of experiments A-D
+4. Calculation of additional metrics
+5. Chart generation
+6. Export of LaTeX-ready tables
 
-## Resultados
+## Results
 
-Los artefactos principales se generan en:
+Main artifacts are generated in:
 
-- `results/`: tablas y metricas en CSV
-- `results/plots/`: visualizaciones
-- `memoria/Imagenes/`: sincronizacion de figuras para la memoria
+- `results/`: CSV tables and metrics
+- `results/plots/`: visualizations
+- `memoria/Imagenes/`: synchronized figures for the written thesis
 
-## Reproducibilidad
+## Reproducibility
 
-- Semilla global fijada en `42` en los scripts de experimentacion.
-- El rango temporal de descarga por defecto se define en `src/data/downloader.py`.
+- Global seed fixed at `42` in the experiment scripts.
+- The default download date range is defined in `src/data/downloader.py`.
 
-## Memoria del TFG
+## Thesis Document
 
-La documentacion academica y anexos estan en la carpeta `memoria/`.
+The academic documentation and appendices are in the `memoria/` folder.
 
-## Nota
+## Note
 
-Proyecto con fines academicos.
+Academic project.
