@@ -1,15 +1,17 @@
 # Final Degree Project - Directional Prediction of Financial Assets with Machine Learning and Alternative Data
 
-This repository contains the code and artifacts for my Final Degree Project, focused on predicting market direction across several financial assets by combining:
+This repository contains the code and artifacts for my Final Degree Project, an academic project focused on predicting market direction across several financial assets by combining:
 
 - Technical indicators
 - Baseline and machine learning models
 - Deep learning models
 - Alternative sentiment data (GDELT)
 
+GDELT is a public database of world news; here it provides the news sentiment for each asset.
+
 ## Author
 
-- Javier Gonzalez Casares
+- Javier González Casares
 
 ## Objective
 
@@ -17,7 +19,7 @@ The goal is to compare different modelling approaches for predicting the evoluti
 
 ## Tech Stack
 
-- Python 3.x
+- Python 3.11 to 3.13
 - pandas, numpy, scipy
 - scikit-learn, xgboost, statsmodels
 - tensorflow
@@ -46,9 +48,11 @@ The goal is to compare different modelling approaches for predicting the evoluti
 
 ## Installation
 
-1. Create a virtual environment:
+1. Clone the repository and create a virtual environment:
 
 ```bash
+git clone https://github.com/i12gocaj/tfg-prediccion-direccional-activos-financieros.git
+cd tfg-prediccion-direccional-activos-financieros
 python3 -m venv .venv
 source .venv/bin/activate
 ```
@@ -66,6 +70,8 @@ Run the full workflow:
 ```bash
 python main.py
 ```
+
+Note that this downloads the data again and overwrites the committed `data/` and `results/` files.
 
 The pipeline performs:
 
@@ -92,7 +98,3 @@ Main artifacts are generated in:
 ## Thesis Document
 
 The academic documentation and appendices are in the `memoria/` folder.
-
-## Note
-
-Academic project.
